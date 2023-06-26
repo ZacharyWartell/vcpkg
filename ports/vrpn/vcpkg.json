@@ -1,0 +1,5 @@
+﻿{
+  "name": "vrpn",
+  "version-string": "7.35",
+  "description": "The Virtual-Reality Peripheral Network (VRPN) is a set of classes within a library and a set of servers that are designed to implement a network-transparent interface between application programs and the set of physical devices (tracker, etc.) used in a virtual-reality (VR) system."
+}
