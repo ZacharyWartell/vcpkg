@@ -1,0 +1,43 @@
+diff --git a/dom/src/dae/daeURI.cpp b/dom/src/dae/daeURI.cpp
+index 3a8f815..82d52e1 100644
+--- a/dom/src/dae/daeURI.cpp
++++ b/dom/src/dae/daeURI.cpp
+@@ -863,7 +863,7 @@ string cdom::assembleUri(const string& scheme,
+ 
+     if( forceLibxmlCompatible ) {
+         // unfortunately libxml cannot parse %20 in xmlReaderForFile, so have to replace %20 with space
+-        uri = replace(uri, "%20", " ");
++        uri = cdom::replace(uri, "%20", " ");
+     }
+     return uri;
+ }
+@@ -883,11 +883,11 @@ string cdom::nativePathToUri(const string& nativePath, systemType type) {
+         if (uri.length() >= 2  &&  isalpha(uri[0])  &&  uri[1] == ':')
+             uri.insert(0, "/");
+         // Convert backslashes to forward slashes
+-        uri = replace(uri, "\\", "/");
++        uri = cdom::replace(uri, "\\", "/");
+     }
+ 
+     // Convert spaces to %20
+-    uri = replace(uri, " ", "%20");
++    uri = cdom::replace(uri, " ", "%20");
+ 
+     return uri;
+ }
+@@ -921,13 +921,13 @@ string cdom::uriToNativePath(const string& uriRef, systemType type) {
+             path.erase(0, 1);
+ 
+         // Convert forward slashes to back slashes
+-        path = replace(path, "/", "\\");
++        path = cdom::replace(path, "/", "\\");
+     }
+ 
+     filePath += path;
+ 
+     // Replace %20 with space
+-    filePath = replace(filePath, "%20", " ");
++    filePath = cdom::replace(filePath, "%20", " ");
+ 
+     return filePath;
+ }

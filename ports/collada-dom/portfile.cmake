@@ -10,6 +10,7 @@ vcpkg_from_github(
         use-vcpkg-minizip.patch
         fix-shared-keyword.patch
         fix-emscripten.patch
+	daeURI.patch
 )
 
 vcpkg_cmake_configure(
