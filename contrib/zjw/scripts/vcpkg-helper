@@ -11,9 +11,9 @@
 # - https://medium.com/@Drew_Stokes/bash-argument-parsing-54f3b81a6a8f
 
 VCPKG_ROOT=/c/vcpkg
-LIBRARY=vrpn
+PORT=
 SRC_DIR=0d99f50601-340a543fbb
-SRC_PATH="$VCPKG_ROOT/buildtrees/$LIBRARY/src/$SRC_DIR"
+SRC_PATH=
 
 enable_dry_run ()
 {
@@ -85,6 +85,20 @@ while (( "$#" )); do
                 shift
             fi                        
             ;;    
+        --port)            
+            if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
+                PORT=$2
+                SRC_PATH="$VCPKG_ROOT/buildtrees/$PORT/src/$SRC_DIR"
+                if [ $debug -gt 0 ]; then
+                    echo SRC_PATH: $SRC_PATH
+                fi 
+                shift 2
+            else
+                echo --port options requires and argument                 
+                exit 2
+            fi                        
+            ;;    
+
         --dry-run)
             dry_run=1            
             echo DRY_RUN
