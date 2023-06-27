@@ -10,6 +10,8 @@
 # - https://man7.org/linux/man-pages/man1/getopts.1p.html 
 # - https://medium.com/@Drew_Stokes/bash-argument-parsing-54f3b81a6a8f
 
+VERSION="alpha-1.0"
+
 VCPKG_ROOT=/c/vcpkg
 PORT=
 SRC_DIR=0d99f50601-340a543fbb
@@ -70,7 +72,12 @@ generate_patches ()
 	FILES=`GIT status | gawk '/.*modified:.*CMakeLists\.txt/  { print $2 }'`
     for FILE in $FILES; do
         echo $FILE
-        PATCH_FILE=`basename $FILE`.patch
+        DIR_NAME=`dirname $FILE`
+        DIR_NAME=`basename $DIR_NAME`
+        if [ "$DIR_NAME" = " " ]; then
+            DIR_NAME=$PORT
+        fi
+        PATCH_FILE=`basename $FILE`-$DIR_NAME.patch
         pushd `dirname $FILE` > /dev/null     
             GIT diff `basename $FILE` > $PATCH_FILE 2> /dev/null        
             if [ $debug -gt 0 ]; then
@@ -89,6 +96,7 @@ generate_patches ()
 show_help ()
 {
     echo 'vcpkg-helper --port <NAME_OF_PORT> [--src <SRC_DIR_NAME>] [--dry-run] [--debug [<int>]] [--init-repo] [--generate-patches]'
+    echo "(version = $VERSION)"
     echo 
     echo '   <NAME_OF_PORT> = name of target vcpkg port as found in VCPKG_ROOT/ports/NAME_OF_PORT and VCPKG_ROOT/buildtrees/NAME_OF_PORT/src'
     echo '   <SRC_DIR_NAME> = name of target buildtree of vcpkg port, e.g. VCPKG_ROOT/buildtrees/NAME_OF_PORT/src/SRC_DIR_NAME'
