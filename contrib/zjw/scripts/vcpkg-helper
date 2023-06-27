@@ -13,33 +13,60 @@
 VCPKG_ROOT=/c/vcpkg
 LIBRARY=vrpn
 SRC_DIR=0d99f50601-340a543fbb
+SRC_PATH="$VCPKG_ROOT/buildtrees/$LIBRARY/src/$SRC_DIR"
 
 init ()
 {
 	# Create temp git repo for facilitating generation of git diff patches
-	pushd "$VCPKG_ROOT/buildtrees/$LIBRARY/src/$SRC_DIR"
+	pushd $SRC_PATH
 	git init
 	git add *
 	git commit -m '-vcpkg-helper:  temp git repo for facilitating generation of git diff patches'
 	popd
 }
 
+
+#
+# Run git diff on all modified files CMakelist.txt
+#
 generate_patches ()
 {
     echo generate_patches
-    pushd "$VCPKG_ROOT/buildtrees/$LIBRARY/src/$SRC_DIR" > /dev/null        
+    pushd $SRC_PATH > /dev/null        
 	FILES=`git status | gawk '/.*modified:.*CMakeLists\.txt/  { print $2 }'`
     for FILE in $FILES; do
         echo $FILE
+        PATCH_FILE=`basename $FILE`.patch
+        pushd `dirname $FILE` > /dev/null     
+            git diff `basename $FILE` > $PATCH_FILE 2> /dev/null        
+            if [ $debug -gt 0 ]; then
+                echo In `pwd` generated:            
+                ls $PATCH_FILE
+                if [ $debug -gt 1 ]; then
+                    cat $PATCH_FILE
+                fi
+                echo -------------------------
+            fi                        
+        popd > /dev/null        
     done	
     popd > /dev/null
 }
 
 dry_run=
+debug=0
 
 PARAMS=""
 while (( "$#" )); do
     case "$1" in
+        --debug)            
+            if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
+                debug=$2
+                shift 2
+            else
+                debug=1                
+            fi            
+            shift
+            ;;    
         --dry-run)
             dry_run=1
             shift
