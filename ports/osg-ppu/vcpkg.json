@@ -1,14 +1,10 @@
 ﻿{
-  "name": "osgPPU",
+  "name": "osg-ppu",
   "version-string": "9-28-2020",
   "description": "osgPPU is an OpenSceneGraph NodeKit. It provides you with a graph based specification of a computation pipeline based on so called PostProcessingUnits (PPUs).",
   "dependencies": [
     {
       "name": "vcpkg-cmake",
-      "host": true
-    },
-    {
-      "name": "osgPPU",
       "host": true
     }
   ]
