@@ -15,14 +15,32 @@ LIBRARY=vrpn
 SRC_DIR=0d99f50601-340a543fbb
 SRC_PATH="$VCPKG_ROOT/buildtrees/$LIBRARY/src/$SRC_DIR"
 
-init ()
+enable_dry_run ()
 {
-	# Create temp git repo for facilitating generation of git diff patches
-	pushd $SRC_PATH
-	git init
-	git add *
-	git commit -m '-vcpkg-helper:  temp git repo for facilitating generation of git diff patches'
-	popd
+    alias git='echo git'
+}
+
+git ()
+{
+    if [ $dry_run ]; then
+        echo git $*
+    else
+        git $*
+    fi
+
+}
+
+init_repo ()
+{
+    check=`git remote -v`
+    if [ "$check" = "" ]; then
+        # Create temp git repo for facilitating generation of git diff patches
+        pushd $SRC_PATH
+        git init
+        git add *
+        git commit -m '-vcpkg-helper:  temp git repo for facilitating generation of git diff patches'
+        popd
+    fi
 }
 
 
@@ -64,17 +82,24 @@ while (( "$#" )); do
                 shift 2
             else
                 debug=1                
-            fi            
-            shift
+                shift
+            fi                        
             ;;    
         --dry-run)
-            dry_run=1
+            dry_run=1            
+            echo DRY_RUN
+            alias git='echo git'
+            alias
             shift
             ;;
         --generate-patches)
             generate_patches
             exit 0
             ;;
+        --init-repo)
+            init_repo
+            exit 0
+            ;;            
         -*|--*=) # unsupported flags
             echo "Error: Unsupported flag $1" >&2
             exit 1
