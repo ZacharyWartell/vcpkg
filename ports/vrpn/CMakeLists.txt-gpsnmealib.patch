@@ -1,0 +1,40 @@
+diff --git a/gpsnmealib/CMakeLists.txt b/gpsnmealib/CMakeLists.txt
+index 9a34e2d..42438cc 100644
+--- a/gpsnmealib/CMakeLists.txt
++++ b/gpsnmealib/CMakeLists.txt
+@@ -2,6 +2,11 @@ if(WIN32)
+ 	ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
+ endif()
+ 
++if(VRPN_VCPKG)
++	# vcpkg keeps giving me (ZJW) dlls, yet directly running Cmake on VRPN generates the static link'ed '.lib.
++	set(BUILD_SHARED_LIBS FALSE)
++endif()
++
+ set(GPSNMEALIB_PUBLIC_HEADERS
+ 	nmeaParser.h
+ 	utmCoord.h
+@@ -14,7 +19,12 @@ set(GPSNMEALIB_SOURCES
+ 	typedCoord.C
+ 	utmCoord.C)
+ 
+-add_library(gpsnmea ${GPSNMEALIB_PUBLIC_HEADERS} ${GPSNMEALIB_SOURCES})
++if(VRPN_VCPKG)
++	add_library(gpsnmea STATIC ${GPSNMEALIB_PUBLIC_HEADERS} ${GPSNMEALIB_SOURCES})
++else()
++	add_library(gpsnmea ${GPSNMEALIB_PUBLIC_HEADERS} ${GPSNMEALIB_SOURCES})
++endif()
++
+ set_property(TARGET
+ 	gpsnmea
+ 	PROPERTY
+@@ -29,4 +39,9 @@ if(VRPN_INSTALL)
+ 		LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT serversdk
+ 		ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT serversdk
+ 		PUBLIC_HEADER DESTINATION include COMPONENT serversdk)
++#else()
++	#install(TARGETS gpsnmea	                
++		#LIBRARY
++		#ARCHIVE
++		#)
+ endif()

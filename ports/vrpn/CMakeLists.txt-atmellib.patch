@@ -1,0 +1,28 @@
+diff --git a/atmellib/CMakeLists.txt b/atmellib/CMakeLists.txt
+index 003785c..26c0851 100644
+--- a/atmellib/CMakeLists.txt
++++ b/atmellib/CMakeLists.txt
+@@ -1,3 +1,8 @@
++if(VRPN_VCPKG)
++	# vcpkg keeps giving me (ZJW) dlls, yet directly running Cmake on VRPN generates the static link'ed '.lib.
++	set(BUILD_SHARED_LIBS FALSE)
++endif()
++
+ set(ATMELLIB_PUBLIC_HEADERS
+ 	vrpn_atmellib_errno.h
+ 	vrpn_atmellib.h)
+@@ -28,4 +33,13 @@ if(VRPN_INSTALL)
+ 		LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT serversdk
+ 		ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT serversdk
+ 		PUBLIC_HEADER DESTINATION include COMPONENT serversdk)
++elseif(VRPN_VCPKG)
++	install(TARGETS vrpn_atmel
++		LIBRARY
++		ARCHIVE
++		)
+ endif()
++
++if(VRPN_VCPKG)
++	file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
++endif()
+\ No newline at end of file
