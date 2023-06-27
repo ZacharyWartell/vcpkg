@@ -16,12 +16,20 @@ VCPKG_ROOT=/c/vcpkg
 PORT=
 SRC_DIR=0d99f50601-340a543fbb
 SRC_PATH=
+PORT_PATH=
 
+
+#
+# @brief [unused] not sure why this idea didn't work....
+#
 enable_dry_run ()
 {
     alias git='echo git'
 }
 
+#
+# @brief Substituted for all script's git calls.  Use for allowing '--dry-run'
+#
 GIT ()
 {
     if [ $dry_run -gt 1 ]; then
@@ -58,8 +66,12 @@ init_repo ()
 
 HELP_GENERATE_PATCHES=$'
 Generate patch files (via git diff) for all modified CMakelist.txt files in VCPKG_ROOT/buildtrees/NAME_OF_PORT/src/SRC_DIR_NAME.\n
-DETAILS:
-    For all modified CMakelist.txt files, generate a file 'CMakelist.txt-DIR_NAME.patch' using git diff of the modified CMakelist.txt
+USAGE DETAILS:
+    vcpkg-helper --generate-patches does the following:
+        - For all modified CMakelist.txt files, generate a file 'CMakelist.txt-DIR_NAME.patch' using git diff of the modified CMakelist.txt
+        - Copy the file to VCPKG_ROOT/ports/NAME_OF_PORT
+
+    You must modify the VCPKG_ROOT/ports/portfile.cmake to call vcpkg_apply_patches() and apply the patch files.        
 '
 
 #
@@ -88,7 +100,8 @@ generate_patches ()
                 if [ $debug -gt 1 ]; then
                     cat $PATCH_FILE
                 fi
-                echo -------------------------
+                cp $PATCH_FILE "$PORT_PATH"
+                echo -------------------------                
             fi                        
         popd > /dev/null        
     done	
@@ -130,6 +143,7 @@ while (( "$#" )); do
             if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
                 PORT=$2
                 SRC_PATH="$VCPKG_ROOT/buildtrees/$PORT/src/$SRC_DIR"
+                PORT_PATH="$VCPKG_ROOT/ports/$PORT"
                 if [ $debug -gt 0 ]; then
                     echo SRC_PATH: $SRC_PATH
                 fi 
@@ -143,6 +157,7 @@ while (( "$#" )); do
             if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
                 PORT=$2
                 SRC_PATH="$VCPKG_ROOT/buildtrees/$PORT/src/$SRC_DIR"
+                PORT_PATH="$VCPKG_ROOT/ports/$PORT"
                 if [ $debug -gt 0 ]; then
                     echo SRC_PATH: $SRC_PATH
                 fi 
