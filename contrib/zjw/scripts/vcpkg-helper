@@ -15,6 +15,11 @@ PORT=
 SRC_DIR=0d99f50601-340a543fbb
 SRC_PATH=
 
+show_help ()
+{
+    echo 'vcpkg-helper --port <NAME_OF_PORT> [--dry-run] [--debug [<int>]] [--init-repo] [--generate-patches]'
+    echo '   <NAME_OF_PORT> = name of target vcpkg port as found in VCPKG_ROOT/ports/NAME_OF_PORT and VCPKG_ROOT/buildtrees/NAME_OF_PORT/src'
+}
 enable_dry_run ()
 {
     alias git='echo git'
@@ -114,6 +119,10 @@ while (( "$#" )); do
             init_repo
             exit 0
             ;;            
+        --help)
+            show_help
+            exit 0
+            ;;                
         -*|--*=) # unsupported flags
             echo "Error: Unsupported flag $1" >&2
             exit 1
