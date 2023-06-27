@@ -1,6 +1,6 @@
 #!/bin/bash
 # @author Zachary Wartell
-# @brief a hack script
+# @brief See show_help()
 #
 # TODO
 #
@@ -15,39 +15,50 @@ PORT=
 SRC_DIR=0d99f50601-340a543fbb
 SRC_PATH=
 
-show_help ()
-{
-    echo 'vcpkg-helper --port <NAME_OF_PORT> [--dry-run] [--debug [<int>]] [--init-repo] [--generate-patches]'
-    echo '   <NAME_OF_PORT> = name of target vcpkg port as found in VCPKG_ROOT/ports/NAME_OF_PORT and VCPKG_ROOT/buildtrees/NAME_OF_PORT/src'
-}
 enable_dry_run ()
 {
     alias git='echo git'
 }
 
-git ()
+GIT ()
 {
-    if [ $dry_run ]; then
-        echo git $*
-    else
-        git $*
+    if [ $dry_run -gt 1 ]; then
+        echo git-dr $@
+    else      
+        #echo for real $@   
+        git $@
     fi
 
 }
 
 init_repo ()
 {
-    check=`git remote -v`
-    if [ "$check" = "" ]; then
-        # Create temp git repo for facilitating generation of git diff patches
-        pushd $SRC_PATH
-        git init
-        git add *
-        git commit -m '-vcpkg-helper:  temp git repo for facilitating generation of git diff patches'
-        popd
+    # assume vcpkg is a git repo with a remote origin, if $SRC_PATH is not yet been initialized as a local (nested) git repo, then initialize it
+    pushd "$SRC_PATH"
+    check=`GIT remote -v`
+    echo check: $check
+    if [ "$check" != "" ]; then
+        # Create temp git repo for facilitating generation of git diff patches        
+        GIT init
+        GIT add *
+        GIT commit -m "-" .       
+    else
+        echo "$SRC_PATH" is already a temporary git repo.  Refusing to run init-repo which would lose tracking of any file modifications.
+        echo If you really want to re 'git init' then 
+        echo    - delete "$SRC_PATH"
+        echo    - rerun 'vcpkg install' to recreate a fresh "$SRC_PATH"
+        echo    - rerun 'vcpkg-helper --init-repo'
     fi
+    popd
 }
 
+
+
+HELP_GENERATE_PATCHES=$'
+Generate patch files (via git diff) for all modified CMakelist.txt files in VCPKG_ROOT/buildtrees/NAME_OF_PORT/src/SRC_DIR_NAME.\n
+DETAILS:
+    For all modified CMakelist.txt, generate a file 'CMakelist.txt.patch' using git diff of modified file
+'
 
 #
 # Run git diff on all modified files CMakelist.txt
@@ -56,12 +67,12 @@ generate_patches ()
 {
     echo generate_patches
     pushd $SRC_PATH > /dev/null        
-	FILES=`git status | gawk '/.*modified:.*CMakeLists\.txt/  { print $2 }'`
+	FILES=`GIT status | gawk '/.*modified:.*CMakeLists\.txt/  { print $2 }'`
     for FILE in $FILES; do
         echo $FILE
         PATCH_FILE=`basename $FILE`.patch
         pushd `dirname $FILE` > /dev/null     
-            git diff `basename $FILE` > $PATCH_FILE 2> /dev/null        
+            GIT diff `basename $FILE` > $PATCH_FILE 2> /dev/null        
             if [ $debug -gt 0 ]; then
                 echo In `pwd` generated:            
                 ls $PATCH_FILE
@@ -75,7 +86,20 @@ generate_patches ()
     popd > /dev/null
 }
 
-dry_run=
+show_help ()
+{
+    echo 'vcpkg-helper --port <NAME_OF_PORT> [--src <SRC_DIR_NAME>] [--dry-run] [--debug [<int>]] [--init-repo] [--generate-patches]'
+    echo 
+    echo '   <NAME_OF_PORT> = name of target vcpkg port as found in VCPKG_ROOT/ports/NAME_OF_PORT and VCPKG_ROOT/buildtrees/NAME_OF_PORT/src'
+    echo '   <SRC_DIR_NAME> = name of target buildtree of vcpkg port, e.g. VCPKG_ROOT/buildtrees/NAME_OF_PORT/src/SRC_DIR_NAME'
+    echo 
+    echo --init-repo : creates local git repo in VCPKG_ROOT/buildtrees/NAME_OF_PORT/src/SRC_DIR_NAME that will be used by vcpkg-helper to facilitate generate patches using git diff
+    echo
+    echo --generate-patches :
+    echo "$HELP_GENERATE_PATCHES"
+}
+
+dry_run=0
 debug=0
 
 PARAMS=""
@@ -100,6 +124,19 @@ while (( "$#" )); do
                 shift 2
             else
                 echo --port options requires and argument                 
+                exit 2
+            fi                        
+            ;;    
+        --src)            
+            if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
+                PORT=$2
+                SRC_PATH="$VCPKG_ROOT/buildtrees/$PORT/src/$SRC_DIR"
+                if [ $debug -gt 0 ]; then
+                    echo SRC_PATH: $SRC_PATH
+                fi 
+                shift 2
+            else
+                echo --src options requires and argument                 
                 exit 2
             fi                        
             ;;    
