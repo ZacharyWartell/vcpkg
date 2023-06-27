@@ -59,7 +59,7 @@ init_repo ()
 HELP_GENERATE_PATCHES=$'
 Generate patch files (via git diff) for all modified CMakelist.txt files in VCPKG_ROOT/buildtrees/NAME_OF_PORT/src/SRC_DIR_NAME.\n
 DETAILS:
-    For all modified CMakelist.txt, generate a file 'CMakelist.txt.patch' using git diff of modified file
+    For all modified CMakelist.txt files, generate a file 'CMakelist.txt-DIR_NAME.patch' using git diff of the modified CMakelist.txt
 '
 
 #
@@ -71,7 +71,7 @@ generate_patches ()
     pushd $SRC_PATH > /dev/null        
 	FILES=`GIT status | gawk '/.*modified:.*CMakeLists\.txt/  { print $2 }'`
     for FILE in $FILES; do
-        echo $FILE
+        #echo $FILE
         DIR_NAME=`dirname $FILE`
         DIR_NAME=`basename $DIR_NAME`
         if [ "$DIR_NAME" = " " ]; then
@@ -82,7 +82,7 @@ generate_patches ()
             GIT diff `basename $FILE` > $PATCH_FILE 2> /dev/null        
             if [ $debug -gt 0 ]; then
                 echo In `pwd` generated:            
-                ls $PATCH_FILE
+                echo '    '`ls $PATCH_FILE`
                 if [ $debug -gt 1 ]; then
                     cat $PATCH_FILE
                 fi
@@ -99,8 +99,10 @@ show_help ()
     echo "(version = $VERSION)"
     echo 
     echo '   <NAME_OF_PORT> = name of target vcpkg port as found in VCPKG_ROOT/ports/NAME_OF_PORT and VCPKG_ROOT/buildtrees/NAME_OF_PORT/src'
-    echo '   <SRC_DIR_NAME> = name of target buildtree of vcpkg port, e.g. VCPKG_ROOT/buildtrees/NAME_OF_PORT/src/SRC_DIR_NAME'
+    echo '   <SRC_DIR_NAME> = name of target buildtree of vcpkg port, e.g. VCPKG_ROOT/buildtrees/NAME_OF_PORT/src/SRC_DIR_NAME'    
     echo 
+    echo "--debug [<int>] : sets debug output level to <int> (or 1 if <int> is not given)."
+    echo --dry-run : displays the file and git operations without performing them.
     echo --init-repo : creates local git repo in VCPKG_ROOT/buildtrees/NAME_OF_PORT/src/SRC_DIR_NAME that will be used by vcpkg-helper to facilitate generate patches using git diff
     echo
     echo --generate-patches :
