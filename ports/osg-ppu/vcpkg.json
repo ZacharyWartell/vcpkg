@@ -1,6 +1,6 @@
 ﻿{
   "name": "osg-ppu",
-  "version-string": "9-28-2020",
+  "version-string": "0.5.9_9-28-2020",
   "description": "osgPPU is an OpenSceneGraph NodeKit. It provides you with a graph based specification of a computation pipeline based on so called PostProcessingUnits (PPUs).",
   "dependencies": [
     {

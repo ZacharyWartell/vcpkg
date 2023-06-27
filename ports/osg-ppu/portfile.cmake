@@ -13,6 +13,10 @@
 
 vcpkg_cmake_configure(
     SOURCE_PATH ${SOURCE_PATH}
+    OPTIONS
+        -DDYNAMIC_OSGPPU=ON
+        #-DCMAKE_LIBRARY_OUTPUT_DIRECTORY="c:\\vcpkg\\buildtrees\\osg-ppu\\x64-windows-dbg\\lib"
     )
 vcpkg_cmake_install()
-#file(INSTALL "${SOURCE_PATH}/README.Legal" DESTINATION "${CURRENT_PACKAGES_DIR}/share/vrpn" RENAME copyright)
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
+file(INSTALL "${SOURCE_PATH}/LICENSE.txt" DESTINATION "${CURRENT_PACKAGES_DIR}/share/vrpn" RENAME copyright)
