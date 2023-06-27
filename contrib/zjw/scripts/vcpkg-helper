@@ -27,8 +27,10 @@ init ()
 generate_patches ()
 {
     echo generate_patches
-	FILES=`git status | grep modified:`
-	echo $FILES
+	FILES=`git status | gawk '/.*modified:.*/  { print $2 }'`
+    for FILE in $FILES; do
+        echo $FILE
+    done	
 }
 
 dry_run=
