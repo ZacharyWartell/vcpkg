@@ -4,9 +4,7 @@
     # https://github.com/cgart/osgPPU.git
     #REF version_07.35    
     REF cb65b6b18ba23cb34fe9a939f44113c24a412422    
-    SHA512 7534120f49446b92dd9a15367b823772e5d41a1e548a2187dbdb6f3f1583341311b10d42ae41df040054c9b33d0320cc7f6fa8f67b9e8f27cd39b5dcb6659f26
-    #SHA512 9a4225e01d07f1a298cd1fc5b938e4be57c03b2c82560a2a77cc327a4a83cbde6b88f796fd6071f7bd8de7ebbb6a8bac86b56fa3025697b5bb7820a7cc71862a
-    #HEAD_REF version_07.35
+    SHA512 687082d501943049d1bbed0f0f5002c9779f375b412f4648c9dd1f10ea3b4ce3b449d4160d2953e0eb059db4c361db005113b2ded065b43baef3a0b447e62329        
     #PATCHES
     #    CMakeLists.txt-vrpn.patch
     #    CMakeLists.txt-atmellib.patch
