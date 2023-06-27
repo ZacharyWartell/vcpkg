@@ -67,16 +67,18 @@ DETAILS:
 #
 generate_patches ()
 {
-    echo generate_patches
+    #echo generate_patches
     pushd $SRC_PATH > /dev/null        
 	FILES=`GIT status | gawk '/.*modified:.*CMakeLists\.txt/  { print $2 }'`
     for FILE in $FILES; do
         #echo $FILE
-        DIR_NAME=`dirname $FILE`
-        DIR_NAME=`basename $DIR_NAME`
-        if [ "$DIR_NAME" = " " ]; then
+        DIR_NAME=`dirname $FILE`        
+        if [ "$DIR_NAME" = "." ]; then
             DIR_NAME=$PORT
+        else
+            DIR_NAME=`basename $DIR_NAME`
         fi
+        
         PATCH_FILE=`basename $FILE`-$DIR_NAME.patch
         pushd `dirname $FILE` > /dev/null     
             GIT diff `basename $FILE` > $PATCH_FILE 2> /dev/null        
