@@ -1,0 +1,15 @@
+diff --git a/src/osgPPU/UnitInMipmapOut.cpp b/src/osgPPU/UnitInMipmapOut.cpp
+index c9d2bc1..cfe3bad 100644
+--- a/src/osgPPU/UnitInMipmapOut.cpp
++++ b/src/osgPPU/UnitInMipmapOut.cpp
+@@ -233,7 +233,9 @@ namespace osgPPU
+         if (mUseShader) return;
+ 
+         // get the fbo extensions
+-        osg::FBOExtensions* fbo_ext = osg::FBOExtensions::instance(renderInfo.getContextID(),true);
++        // osg::FBOExtensions* fbo_ext = osg::FBOExtensions::instance(renderInfo.getContextID(),true);
++        // osg::GLExtensions* fbo_ext = renderInfo.get<osg::GLExtensions>();
++        osg::GLExtensions* fbo_ext = renderInfo.getState()->get<osg::GLExtensions>();
+         
+         // we don't use shader, that means that the mipmaps are generated in hardware, hence do this
+         std::map<int, osg::ref_ptr<osg::Texture> >::iterator it = mOutputTex.begin();

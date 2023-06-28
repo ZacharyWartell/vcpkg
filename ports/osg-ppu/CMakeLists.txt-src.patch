@@ -1,0 +1,11 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 3fdb094..c02ccbe 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-ADD_SUBDIRECTORY(example)
++#ADD_SUBDIRECTORY(example)
+ ADD_SUBDIRECTORY(osgPPU)
+-ADD_SUBDIRECTORY(osgPlugins)
++#ADD_SUBDIRECTORY(osgPlugins)
+ 
