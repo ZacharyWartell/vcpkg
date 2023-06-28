@@ -14,7 +14,7 @@ VERSION="alpha-1.0"
 
 VCPKG_ROOT=/c/vcpkg
 PORT=
-SRC_DIR=0d99f50601-340a543fbb
+SRC_DIR=0d99f50601-21eb696825
 SRC_PATH=
 PORT_PATH=
 
@@ -44,7 +44,7 @@ GIT ()
 init_repo ()
 {
     # assume vcpkg is a git repo with a remote origin, if $SRC_PATH is not yet been initialized as a local (nested) git repo, then initialize it
-    pushd "$SRC_PATH"
+    pushd "$SRC_PATH" > /dev/null
     check=`GIT remote -v`
     echo check: $check
     if [ "$check" != "" ]; then
@@ -59,7 +59,7 @@ init_repo ()
         echo    - rerun 'vcpkg install' to recreate a fresh "$SRC_PATH"
         echo    - rerun 'vcpkg-helper --init-repo'
     fi
-    popd
+    popd > /dev/null        
 }
 
 
@@ -68,10 +68,10 @@ HELP_GENERATE_PATCHES=$'
 Generate patch files (via git diff) for all modified CMakelist.txt files in VCPKG_ROOT/buildtrees/NAME_OF_PORT/src/SRC_DIR_NAME.\n
 USAGE DETAILS:
     vcpkg-helper --generate-patches does the following:
-        - For all modified CMakelist.txt files, generate a file 'CMakelist.txt-DIR_NAME.patch' using git diff of the modified CMakelist.txt
+        - For all modified files, generate a file '<FILE_NAME>-DIR_NAME.patch' using git diff of the modified file
         - Copy the file to VCPKG_ROOT/ports/NAME_OF_PORT
 
-    You must modify the VCPKG_ROOT/ports/portfile.cmake to call vcpkg_apply_patches() and apply the patch files.        
+    You must modify the VCPKG_ROOT/ports/portfile.cmake call vcpkg_from_github() PATCHES parameter to apply the patch files.        
 '
 
 #
@@ -81,7 +81,8 @@ generate_patches ()
 {
     #echo generate_patches
     pushd $SRC_PATH > /dev/null        
-	FILES=`GIT status | gawk '/.*modified:.*CMakeLists\.txt/  { print $2 }'`
+	#FILES=`GIT status | gawk '/.*modified:.*CMakeLists\.txt/  { print $2 }'`
+    FILES=`GIT status | gawk '/.*modified:.*/  { print $2 }'`
     for FILE in $FILES; do
         #echo $FILE
         DIR_NAME=`dirname $FILE`        
@@ -155,7 +156,7 @@ while (( "$#" )); do
             ;;    
         --src)            
             if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
-                PORT=$2
+                SRC_DIR=$2
                 SRC_PATH="$VCPKG_ROOT/buildtrees/$PORT/src/$SRC_DIR"
                 PORT_PATH="$VCPKG_ROOT/ports/$PORT"
                 if [ $debug -gt 0 ]; then

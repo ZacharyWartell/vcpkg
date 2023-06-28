@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>osg-ppg-journal</title>
+  </head>
+  <body>
+    <h3 style=" text-align: center;">osg-ppg vcpkg Journal</h3>
+    <p style="text-align: center;">Author: Zachary Justin Wartell</p>
+    <p>osgPPU appears to need some minor updates for OSG 3.6.5.</p>
+    <p>The vcpkg patch I created are these:</p>
+    <p><code>zwart@toybox-2020 MINGW64 /c/vcpkg/ports/osg-ppu (master)<br>
+        $ ls -la<br>
+        total 790<br>
+        drwxr-xr-x 1 zwart 197609&nbsp;&nbsp;&nbsp; 0 Jun 27 20:00 ./<br>
+        drwxr-xr-x 1 zwart 197609&nbsp;&nbsp;&nbsp; 0 Jun 27 18:30 ../<br>
+        -rw-r--r-- 1 zwart 197609&nbsp; 293 Jun 27 20:00 CMakeLists.txt-src.patch<br>
+        -rw-r--r-- 1 zwart 197609&nbsp; 888 Jun 27 19:56 portfile.cmake<br>
+        -rw-r--r-- 1 zwart 197609&nbsp; 667 Jun 27 20:00 Unit.h-osgPPU.patch<br>
+        -rw-r--r-- 1 zwart 197609&nbsp; 857 Jun 27 20:00 UnitInMipmapOut.cpp-osgPPU.patch<br>
+        -rw-r--r-- 1 zwart 197609 2487 Jun 27 20:00 UnitInOut.cpp-osgPPU.patch<br>
+        -rw-r--r-- 1 zwart 197609&nbsp; 339 Jun 27 18:40 vcpkg.json</code></p>
+    <h1>Notes</h1>
+    <p><br>
+    </p>
+    <ul>
+      <li><a href="https://github.com/bjornblissing/osgoculusviewer/issues/53">https://github.com/bjornblissing/osgoculusviewer/issues/53<br>
+            <blockquote><br>
+      The call:<br>
+        const osg::FBOExtensions* fbo_ext = osg::FBOExtensions::instance(ctx, true);<br>
+        <br>
+        Will have to be replaced with:<br>
+        const osg::GLExtensions* fbo_ext = state.get&lt;osg::GLExtensions&gt;();
+    </blockquote>
+        </a></li>
+    </ul>
+
+  </body>
+</html>
