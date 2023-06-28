@@ -5,10 +5,11 @@
     #REF version_07.35    
     REF cb65b6b18ba23cb34fe9a939f44113c24a412422    
     SHA512 687082d501943049d1bbed0f0f5002c9779f375b412f4648c9dd1f10ea3b4ce3b449d4160d2953e0eb059db4c361db005113b2ded065b43baef3a0b447e62329        
-    #PATCHES
-    #    CMakeLists.txt-vrpn.patch
-    #    CMakeLists.txt-atmellib.patch
-    #   CMakeLists.txt-gpsnmealib.patch
+    PATCHES
+        CMakeLists.txt-src.patch
+        Unit.h-osgPPU.patch
+        UnitInMipmapOut.cpp-osgPPU.patch
+        UnitInOut.cpp-osgPPU.patch
 )
 
 vcpkg_cmake_configure(
