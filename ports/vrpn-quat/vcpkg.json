@@ -1,0 +1,11 @@
+﻿{
+  "name": "vrpn-quat",
+  "version-string": "7.35_6-26-2023",
+  "description": "This library contains the source and test files for the quaternion library, libquat.a.  It is based on Warren Robinett's adapted version of Ken Shoemake's code, as seen in Shoemake's 1985 SIGGRAPH paper.",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    }
+  ]
+}
