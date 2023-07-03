@@ -25,6 +25,8 @@
     </p>
     <ul>
       <li><a href="https://github.com/bjornblissing/osgoculusviewer/issues/53">https://github.com/bjornblissing/osgoculusviewer/issues/53<br>
+        
+        </a>
             <blockquote><br>
       The call:<br>
         const osg::FBOExtensions* fbo_ext = osg::FBOExtensions::instance(ctx, true);<br>
@@ -32,7 +34,7 @@
         Will have to be replaced with:<br>
         const osg::GLExtensions* fbo_ext = state.get&lt;osg::GLExtensions&gt;();
     </blockquote>
-        </a></li>
+      </li>
     </ul>
 
   </body>
