@@ -1,0 +1,87 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b8ef788..f5f0246 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -8,6 +8,12 @@ project(VRPN)
+ # Move the shared-library code over to CMake's normal definition
+ # Improve this CPack installer.
+ 
++
++if(VRPN_VCPKG)
++	# vcpkg keeps giving me (ZJW) dlls, yet directly running Cmake on VRPN generates the static link'ed '.lib.
++	set(BUILD_SHARED_LIBS FALSE)
++endif()
++
+ ###
+ # Local CMake Modules - keep this first
+ ###
+@@ -210,8 +216,14 @@ include_directories(${VRPN_SOURCE_DIR}
+ ###
+ # Quatlib
+ ###
+-add_subdirectory(quat)
+-list(APPEND EXTRA_LIBS quat)
++if(VRPN_VCPKG)
++	find_library(QUAT_LIB quat REQUIRED)
++	list(APPEND EXTRA_LIBS ${QUAT_LIB})
++else()
++	add_subdirectory(quat)
++	list(APPEND EXTRA_LIBS quat)
++endif()
++
+ 
+ ###
+ # Threading (not on win32)
+@@ -1323,8 +1335,16 @@ if(VRPN_BUILD_SERVER_LIBRARY)
+ 		target_link_libraries(vrpnserver vrpn_atmel)
+ 	endif()
+ 
+-	add_subdirectory(gpsnmealib)
+-	target_link_libraries(vrpnserver gpsnmea)
++	#if(VRPN_VCPKG)
++	#	add_subdirectory(gpsnmealib)
++	#	find_library(GPSNMEA_LIB gpsnmea REQUIRED)			
++	#	target_link_libraries(vrpnserver ${GPSNMEA_LIB})
++	#else()
++		add_subdirectory(gpsnmealib)
++		target_link_libraries(vrpnserver gpsnmea)
++	#endif()
++
++	
+ 	if(VRPN_INSTALL)
+ 		install(TARGETS
+ 			vrpnserver
+@@ -1332,6 +1352,12 @@ if(VRPN_BUILD_SERVER_LIBRARY)
+ 			LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT serversdk
+ 			ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT serversdk
+ 			PUBLIC_HEADER DESTINATION include COMPONENT serversdk)
++	else()
++		install(TARGETS vrpnserver	                
++			RUNTIME
++			LIBRARY
++			ARCHIVE
++			)
+ 	endif()
+ 	add_cppcheck(vrpnserver STYLE UNUSED_FUNCTIONS)
+ endif()
+@@ -1378,6 +1404,11 @@ if(VRPN_BUILD_CLIENT_LIBRARY)
+ 			LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT clientsdk
+ 			ARCHIVE DESTINATION lib${LIB_SUFFIX} COMPONENT clientsdk
+ 			PUBLIC_HEADER DESTINATION include COMPONENT clientsdk)
++	else()
++		install(TARGETS vrpn
++			LIBRARY
++			ARCHIVE
++			)
+ 	endif()
+ 	add_cppcheck(vrpn STYLE UNUSED_FUNCTIONS)
+ endif()
+@@ -1564,3 +1595,7 @@ if(VRPN_INSTALL)
+ 	cpack_add_component(java DISPLAY_NAME "Java bindings")
+ 	cpack_add_component(doc DISPLAY_NAME "C++ API Documentation")
+ endif()
++
++if(VRPN_VCPKG)
++	file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
++endif()
+\ No newline at end of file
